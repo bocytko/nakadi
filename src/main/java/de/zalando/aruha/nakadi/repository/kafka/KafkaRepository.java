@@ -221,8 +221,12 @@ public class KafkaRepository implements TopicRepository {
                                                          final OffsetResponse earliestPartitionData) {
 
         final TopicPartition tp = new TopicPartition(partition.topic(), toNakadiPartition(partition.partition()));
-        final long latestOffset = latestPartitionData.offsets(partition.topic(), partition.partition())[0];
-        final long earliestOffset = earliestPartitionData.offsets(partition.topic(), partition.partition())[0];
+
+        final long[] latestOffsets = latestPartitionData.offsets(partition.topic(), partition.partition());
+        final long latestOffset = latestOffsets.length > 0 ? latestOffsets[0] : 0;
+
+        final long[] earliestOffsets = earliestPartitionData.offsets(partition.topic(), partition.partition());
+        final long earliestOffset = earliestOffsets.length > 0 ? earliestOffsets[0] : 0;
 
         tp.setNewestAvailableOffset(toNakadiOffset(latestOffset));
         tp.setOldestAvailableOffset(toNakadiOffset(earliestOffset));
